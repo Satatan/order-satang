@@ -5,6 +5,7 @@ import (
 	"order_satang/internal/domain"
 	"order_satang/internal/models"
 	"order_satang/internal/repository/dbmodels"
+	"order_satang/util/enum"
 
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -52,6 +53,15 @@ func (r *orderRepository) UpdateOrder(data models.Order) (*models.Order, error) 
 		}).Error(err.Error())
 
 		return nil, errors.WithStack(err)
+	}
+
+	if model.CustomerID != data.UserID {
+		logrus.WithFields(logrus.Fields{
+			"path": "internal/repository/order_repo.go",
+			"func": "UpdateOrder",
+		}).Error(enum.MessageStatusForbidden)
+
+		return nil, errors.New(enum.MessageStatusForbidden)
 	}
 
 	model.ToDBmodel(data)

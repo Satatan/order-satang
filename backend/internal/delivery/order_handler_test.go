@@ -8,6 +8,7 @@ import (
 	"order_satang/internal/delivery/dto"
 	domainMocks "order_satang/internal/domain/mocks"
 	"order_satang/internal/models"
+	"order_satang/util/enum"
 	"strings"
 	"testing"
 
@@ -242,6 +243,25 @@ func Test_orderHandler_UpdateOrder(t *testing.T) {
 				id: "foo",
 			},
 			statusCode: http.StatusBadRequest,
+		},
+		{
+			name: "error no permission",
+			fields: fields{
+				OrderUsecase: domainMocks.NewMockOrderUsecaseInterface(ctrl),
+				OrderUsecaseBehavior: func(meui *domainMocks.MockOrderUsecaseInterface) {
+					meui.EXPECT().UpdateOrder(gomock.Any()).Return(nil, errors.New(enum.MessageStatusForbidden))
+				},
+			},
+			httpBuilder: httpBuilder{
+				body: dto.OrderRequest{
+					UserID:   "foo",
+					Product:  "foo",
+					Price:    1,
+					Quantity: 1,
+				},
+				id: "1",
+			},
+			statusCode: http.StatusForbidden,
 		},
 		{
 			name: "error with updating",

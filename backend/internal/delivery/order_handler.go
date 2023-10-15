@@ -123,11 +123,17 @@ func (h *orderHandler) UpdateOrder(c echo.Context) error {
 	data.ID = id
 	order, err := h.OrderUsecase.UpdateOrder(*data)
 	if err != nil {
+		if err.Error() == enum.MessageStatusForbidden {
+			return c.JSON(http.StatusForbidden, dto.CoreResponse{
+				Message: enum.MessageError,
+				Result:  err.Error(),
+			})
+		}
+
 		return c.JSON(http.StatusInternalServerError, dto.CoreResponse{
 			Message: enum.MessageError,
 			Result:  err.Error(),
 		})
-
 	}
 
 	result := dto.Order{}

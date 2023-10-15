@@ -74,12 +74,7 @@ func Test_orderRepository_CreateOrder(t *testing.T) {
 				},
 			},
 			args: args{
-				req: models.Order{
-					UserID:   "foo",
-					Product:  "foo",
-					Price:    1,
-					Quantity: 1,
-				},
+				req: models.Order{},
 			},
 			want:    nil,
 			wantErr: true,
@@ -94,20 +89,9 @@ func Test_orderRepository_CreateOrder(t *testing.T) {
 				},
 			},
 			args: args{
-				req: models.Order{
-					UserID:   "foo",
-					Product:  "foo",
-					Price:    1,
-					Quantity: 1,
-				},
+				req: models.Order{},
 			},
-			want: &models.Order{
-				ID:       0,
-				UserID:   "foo",
-				Product:  "foo",
-				Price:    1,
-				Quantity: 1,
-			},
+			want:    &models.Order{},
 			wantErr: false,
 		},
 	}
@@ -162,12 +146,23 @@ func Test_orderRepository_UpdateOrder(t *testing.T) {
 				},
 			},
 			args: args{
+				req: models.Order{},
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			name: "no permission",
+			fields: fields{
+				db: databaseMock.NewMockCustomGorm(ctrl),
+				dbBehavior: func(mg *databaseMock.MockCustomGorm) {
+					mg.EXPECT().First(gomock.Any(), gomock.Any()).Return(mg)
+					mg.EXPECT().Error().Return(nil)
+				},
+			},
+			args: args{
 				req: models.Order{
-					ID:       0,
-					UserID:   "foo",
-					Product:  "foo",
-					Price:    1,
-					Quantity: 1,
+					UserID: "foo",
 				},
 			},
 			want:    nil,
@@ -186,13 +181,7 @@ func Test_orderRepository_UpdateOrder(t *testing.T) {
 				},
 			},
 			args: args{
-				req: models.Order{
-					ID:       0,
-					UserID:   "foo",
-					Product:  "foo",
-					Price:    1,
-					Quantity: 1,
-				},
+				req: models.Order{},
 			},
 			want:    nil,
 			wantErr: true,
@@ -210,21 +199,9 @@ func Test_orderRepository_UpdateOrder(t *testing.T) {
 				},
 			},
 			args: args{
-				req: models.Order{
-					ID:       0,
-					UserID:   "foo",
-					Product:  "foo",
-					Price:    1,
-					Quantity: 1,
-				},
+				req: models.Order{},
 			},
-			want: &models.Order{
-				ID:       0,
-				UserID:   "foo",
-				Product:  "foo",
-				Price:    1,
-				Quantity: 1,
-			},
+			want:    &models.Order{},
 			wantErr: false,
 		},
 	}

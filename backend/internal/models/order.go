@@ -7,3 +7,7 @@ type Order struct {
 	Price    int
 	Quantity int
 }
+
+type OrderFilter struct {
+	ID uint64
+}
